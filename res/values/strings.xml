@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">DashClock Wifi Extension</string>
+  <string name="extension_label">Wifi</string>
+  <string name="extension_description">Displays your current wifi status</string>
+  <string name="toggle_wifi_to_disabled_message">Disable Wifi?</string>
+  <string name="toggle_wifi_to_enabled_message">Enable Wifi?</string>
+  <string name="toggle_wifi_affirmative_button">OK</string>
+  <string name="toggle_wifi_negative_button">Cancel</string>
+
+  <string name="extension_expanded_body" formatted="false"></string>
+  <string name="extension_expanded_title_connected" formatted="false">%s: %s</string>
+  <string name="extension_expanded_title_not_connected" formatted="false">%s</string>
+
+  <string name="wifi_status_enabled">Enabled</string>
+  <string name="wifi_status_connected">Connected</string>
+  <string name="wifi_status_disabled">Disabled</string>
+  <string name="wifi_status_disabling">Disabling...</string>
+  <string name="wifi_status_unknown">Unknown</string>
+
+  <string name="wifi_device_name_unknown">Unknown</string>
+
+  <string name="wifi_no_paired_devices">- none -</string>
+
+  <string name="action_settings">Settings</string>
+</resources>
