@@ -22,5 +22,9 @@
 
   <string name="wifi_no_paired_devices">- none -</string>
 
+  <string name="extension_settings_title">DashClock Wifi Settings</string>
+  <string name="pref_use_dynamic_signal_strength_icon">Use icon as signal strength?</string>
+  <string name="pref_show_only_when_connected_title">Show only when connected?</string>
+
   <string name="action_settings">Settings</string>
 </resources>
