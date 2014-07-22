@@ -50,20 +50,6 @@ public class WifiMessageBuilder {
         wifiManager.getConnectionInfo().getSSID().replaceAll("\"", ""));
   }
 
-  public String buildExpandedBodyMessage() {
-
-    if (wifiManager == null) {
-      return "";
-    }
-
-    final boolean wifiEnabled = wifiManager.isWifiEnabled();
-    if (!wifiEnabled) {
-      return "";
-    }
-
-    return context.getString(R.string.extension_expanded_body);
-  }
-
   private String getWifiStatus() {
 
     if (networkInfo == null || wifiManager == null) {
@@ -78,6 +64,5 @@ public class WifiMessageBuilder {
     }
 
     return context.getString(R.string.wifi_status_disabled);
-
   }
 }

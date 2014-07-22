@@ -11,6 +11,6 @@ public class ToggleWifiDialogActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         DialogFragment dialog = new ToggleWifiFragment();
-        dialog.show(getSupportFragmentManager(), "Toggle Wifi");
+        dialog.show(getSupportFragmentManager(), getString(R.string.toggle_wifi_dialog_title));
     }
 }

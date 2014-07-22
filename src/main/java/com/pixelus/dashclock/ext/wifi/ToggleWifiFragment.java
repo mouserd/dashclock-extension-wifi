@@ -58,7 +58,6 @@ public class ToggleWifiFragment extends DialogFragment {
 
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(!wifiEnabled);
-
       }
 
       getActivity().finish();
