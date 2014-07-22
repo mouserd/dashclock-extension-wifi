@@ -1,5 +1,6 @@
 package com.pixelus.dashclock.ext.wifi;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,9 +70,10 @@ public class WifiExtensionActivity extends PreferenceActivity
     addPreferencesFromResource(R.xml.preferences);
   }
 
-  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                        String key) {
+  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     updatePrefSummary(findPreference(key));
+
+    sendBroadcast(new Intent(WifiExtension.EXTENSION_SETTINGS_CHANGED));
   }
 
   private void initSummary(Preference p) {

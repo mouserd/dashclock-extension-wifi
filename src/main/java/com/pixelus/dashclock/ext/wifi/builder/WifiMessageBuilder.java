@@ -1,8 +1,9 @@
-package com.pixelus.dashclock.ext.wifi;
+package com.pixelus.dashclock.ext.wifi.builder;
 
 import android.content.Context;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import com.pixelus.dashclock.ext.wifi.R;
 
 /*
  * @author David Mouser

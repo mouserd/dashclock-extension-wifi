@@ -11,6 +11,10 @@ import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.apps.dashclock.api.DashClockExtension;
 import com.google.android.apps.dashclock.api.ExtensionData;
+import com.pixelus.dashclock.ext.wifi.broadcast.SettingsUpdatedBroadcastReceiver;
+import com.pixelus.dashclock.ext.wifi.broadcast.WifiSignalStateBroadcastReceiver;
+import com.pixelus.dashclock.ext.wifi.broadcast.WifiToggledBroadcastReceiver;
+import com.pixelus.dashclock.ext.wifi.builder.WifiMessageBuilder;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
 
@@ -18,29 +22,40 @@ public class WifiExtension extends DashClockExtension {
 
   public static final String TAG = WifiExtension.class.getName();
   public static final String WIFI_ENABLED = "com.pixelus.dashclock.ext.wifi.WIFI_ENABLED";
+  public static final String EXTENSION_SETTINGS_CHANGED = "com.pixelus.dashclock.ext.wifi.SETTINGS_CHANGED";
 
   private boolean crashlyticsStarted = false;
   private WifiToggledBroadcastReceiver wifiToggledBroadcastReceiver;
+  private WifiSignalStateBroadcastReceiver signalStrengthBroadcastReceiver;
   private int lastIcon = -1;
   private String lastStatus;
 
   @Override
   public void onCreate() {
-
     super.onCreate();
 
-    final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-    final boolean showSignalStrength = sp.getBoolean("show_signal_strength", true);
+    registerReceiver(new SettingsUpdatedBroadcastReceiver(this), new IntentFilter(EXTENSION_SETTINGS_CHANGED));
+  }
+
+  @Override
+  protected void onInitialize(boolean isReconnect) {
+    super.onInitialize(isReconnect);
+
+    if (!crashlyticsStarted) {
+      Crashlytics.start(this);
+      crashlyticsStarted = true;
+    }
+
+    setUpdateWhenScreenOn(true);
 
     // On create, register to receive any changes to the wifi settings.  This ensures that we can
     // update our extension status based on us toggling the state or something externally.
     wifiToggledBroadcastReceiver = new WifiToggledBroadcastReceiver(this);
+    signalStrengthBroadcastReceiver = new WifiSignalStateBroadcastReceiver(this);
     registerReceiver(wifiToggledBroadcastReceiver, new IntentFilter(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION));
     registerReceiver(wifiToggledBroadcastReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
     registerReceiver(wifiToggledBroadcastReceiver, new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
-    if (showSignalStrength) {
-      registerReceiver(wifiToggledBroadcastReceiver, new IntentFilter(WifiManager.RSSI_CHANGED_ACTION));
-    }
+    onSettingsChanged();
   }
 
   @Override
@@ -48,13 +63,12 @@ public class WifiExtension extends DashClockExtension {
     unregisterReceiver(wifiToggledBroadcastReceiver);
   }
 
+  public void onUpdateData() {
+    onUpdateData(UPDATE_REASON_MANUAL);
+  }
+
   @Override
   protected void onUpdateData(int i) {
-
-    if (!crashlyticsStarted) {
-      Crashlytics.start(this);
-      crashlyticsStarted = true;
-    }
 
     final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -82,6 +96,7 @@ public class WifiExtension extends DashClockExtension {
 
     lastIcon = icon;
     lastStatus = status;
+
     // Set the the extension invisible if the user only wants to see when
     final boolean hideExtension = showOnlyWhenConnected && !networkInfo.isConnected();
     if (hideExtension) {
@@ -96,11 +111,25 @@ public class WifiExtension extends DashClockExtension {
         .icon(icon)
         .status(status)
         .expandedTitle(builder.buildExpandedTitleMessage())
-//        .expandedBody(builder.buildExpandedBodyMessage())
         .clickIntent(toggleWifiIntent);
 
     publishUpdate(extensionData);
+  }
 
+  public void onSettingsChanged() {
+
+    final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    final boolean showSignalStrength = sp.getBoolean("show_signal_strength", true);
+
+    registerSignalStrengthReceiver(showSignalStrength);
+  }
+
+  private void registerSignalStrengthReceiver(boolean showSignalStrength) {
+    if (showSignalStrength) {
+      registerReceiver(signalStrengthBroadcastReceiver, new IntentFilter(WifiManager.RSSI_CHANGED_ACTION));
+    } else {
+      unregisterReceiver(signalStrengthBroadcastReceiver);
+    }
   }
 
   private int getIcon(boolean showSignalStrength, WifiManager wifiManager, NetworkInfo networkInfo) {
@@ -110,7 +139,7 @@ public class WifiExtension extends DashClockExtension {
       return R.drawable.ic_signal_off;
     }
 
-    // Does the user doesn't want to see signal strength updates?
+    // Does the user not want to see signal strength updates?
     if (!showSignalStrength && networkInfo.isConnected()) {
       return R.drawable.ic_signal_4;
     }
