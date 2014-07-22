@@ -13,6 +13,6 @@
       android:id="@+id/show_signal_strength"
       android:key="show_signal_strength"
       android:title="@string/pref_use_dynamic_signal_strength_icon"
-      android:defaultValue="true"/>
+      android:defaultValue="false"/>
 
 </PreferenceScreen>
