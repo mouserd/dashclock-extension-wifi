@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.apps.dashclock.api.DashClockExtension;
 import com.google.android.apps.dashclock.api.ExtensionData;
@@ -27,8 +28,8 @@ public class WifiExtension extends DashClockExtension {
   private boolean crashlyticsStarted = false;
   private WifiToggledBroadcastReceiver wifiToggledBroadcastReceiver;
   private WifiSignalStateBroadcastReceiver signalStrengthBroadcastReceiver;
-  private int lastIcon = -1;
-  private String lastStatus;
+  private int currentIcon = -1;
+  private String currentStatus;
 
   @Override
   public void onCreate() {
@@ -87,31 +88,29 @@ public class WifiExtension extends DashClockExtension {
     final String status = builder.buildStatusMessage();
     final int icon = getIcon(showSignalStrength, wifiManager, networkInfo);
     // Minor optimisation - if the icon or status haven't changed since the last update, then
-    // don't both trying to publish an update.  This is done because this extension receives a large
+    // don't bother trying to publish an update.  This is done because this extension receives a large
     // number of broadcast messages, particularly when the signal strength updates.  So we try not to unnecessarily
     // update the UI.
-    if (icon == lastIcon && status.equals(lastStatus)) {
+    if (icon == currentIcon && status.equals(currentStatus)) {
       return;
     }
 
-    lastIcon = icon;
-    lastStatus = status;
+    currentIcon = icon;
+    currentStatus = status;
 
-    // Set the the extension invisible if the user only wants to see when
+    // Set the the extension invisible if the user only wants to see when a connection is active.
     final boolean hideExtension = showOnlyWhenConnected && !networkInfo.isConnected();
     if (hideExtension) {
-      lastIcon = -1;
+      currentIcon = -1; // Ensure the current icon will be different should a connection be established!
     }
-
-    final Intent toggleWifiIntent = new Intent(this, ToggleWifiDialogActivity.class);
-    toggleWifiIntent.putExtra(WIFI_ENABLED, wifiManager.isWifiEnabled());
 
     final ExtensionData extensionData = new ExtensionData()
         .visible(!hideExtension)
         .icon(icon)
         .status(status)
         .expandedTitle(builder.buildExpandedTitleMessage())
-        .clickIntent(toggleWifiIntent);
+        .clickIntent(new Intent(this, ToggleWifiDialogActivity.class)
+            .putExtra(WIFI_ENABLED, wifiManager.isWifiEnabled()));
 
     publishUpdate(extensionData);
   }
@@ -120,6 +119,8 @@ public class WifiExtension extends DashClockExtension {
 
     final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
     final boolean showSignalStrength = sp.getBoolean("show_signal_strength", true);
+
+    Log.d(TAG, "Settings changed, register signal strength receiver = " + showSignalStrength);
 
     registerSignalStrengthReceiver(showSignalStrength);
   }
