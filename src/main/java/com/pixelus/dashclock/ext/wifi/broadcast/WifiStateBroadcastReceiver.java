@@ -5,23 +5,22 @@ import android.content.Context;
 import android.content.Intent;
 import com.pixelus.dashclock.ext.wifi.WifiExtension;
 
-public class WifiToggledBroadcastReceiver extends BroadcastReceiver {
+public class WifiStateBroadcastReceiver extends BroadcastReceiver {
 
-    private static final String TAG = WifiToggledBroadcastReceiver.class.getName();
+  private static final String TAG = WifiStateBroadcastReceiver.class.getName();
 
-    private WifiExtension extension;
+  private WifiExtension extension;
 
-    public WifiToggledBroadcastReceiver(final WifiExtension extension) {
+  public WifiStateBroadcastReceiver(final WifiExtension extension) {
 
-        this.extension = extension;
-    }
+    this.extension = extension;
+  }
 
-    @Override
-    public synchronized void onReceive(Context context, Intent intent) {
+  @Override
+  public synchronized void onReceive(Context context, Intent intent) {
 
-//      Log.d(TAG, "Received broadcast " + intent.getAction());
 //      try {
-        extension.onUpdateData();
+    extension.onUpdateData();
 //      } catch (NullPointerException e) {
 //        // Every so often an exception seems to be thrown by the DashClock api.
 //        // It seems that this exception is timing related.  Catch and log it for now!
@@ -29,5 +28,5 @@ public class WifiToggledBroadcastReceiver extends BroadcastReceiver {
 //          + intent.toString());
 //        Crashlytics.logException(e);
 //      }
-    }
+  }
 }
