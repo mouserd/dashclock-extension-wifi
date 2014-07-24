@@ -2,17 +2,21 @@
     android:title="@string/extension_settings_title"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <CheckBoxPreference
-      android:id="@+id/show_only_when_connected"
-      android:key="show_only_when_connected"
-      android:title="@string/pref_show_only_when_connected_title"
-      android:defaultValue="false"/>
+  <PreferenceCategory android:title="@string/pref_category_display">
+    <CheckBoxPreference
+        android:id="@+id/show_only_when_connected"
+        android:key="show_only_when_connected"
+        android:title="@string/pref_show_only_when_connected_title"
+        android:defaultValue="false"/>
+  </PreferenceCategory>
 
-
-  <CheckBoxPreference
-      android:id="@+id/show_signal_strength"
-      android:key="show_signal_strength"
-      android:title="@string/pref_use_dynamic_signal_strength_icon"
-      android:defaultValue="false"/>
+  <PreferenceCategory android:title="@string/pref_category_labs">
+    <CheckBoxPreference
+        android:id="@+id/show_signal_strength"
+        android:key="show_signal_strength"
+        android:title="@string/pref_use_dynamic_signal_strength_icon_title"
+        android:summary="@string/pref_use_dynamic_signal_strength_icon_summary"
+        android:defaultValue="false"/>
+  </PreferenceCategory>
 
 </PreferenceScreen>
