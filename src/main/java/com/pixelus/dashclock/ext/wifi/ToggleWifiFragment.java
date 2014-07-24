@@ -34,7 +34,7 @@ public class ToggleWifiFragment extends DialogFragment {
     }
 
     return new AlertDialog.Builder(activity)
-        .setMessage(message)
+        .setTitle(message)
         .setPositiveButton(R.string.toggle_wifi_affirmative_button, new DialogClickListener())
         .setNegativeButton(R.string.toggle_wifi_negative_button, new DialogClickListener())
         .create();
