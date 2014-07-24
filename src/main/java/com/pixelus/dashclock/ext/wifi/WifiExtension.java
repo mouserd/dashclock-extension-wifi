@@ -81,7 +81,7 @@ public class WifiExtension extends DashClockExtension {
   public void onUpdateData(int updateReason) {
 
     final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-    final boolean showSignalStrength = sp.getBoolean(WifiExtension.PREF_SHOW_SIGNAL_STRENGTH, false);
+    final boolean showSignalStrength = sp.getBoolean(PREF_SHOW_SIGNAL_STRENGTH, false);
     final boolean showOnlyWhenConnected = sp.getBoolean(PREF_SHOW_ONLY_WHEN_CONNECTED, false);
 
     final ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -99,7 +99,7 @@ public class WifiExtension extends DashClockExtension {
     // don't bother trying to publish an update.  This is done because this extension receives a large
     // number of broadcast messages, particularly when the signal strength updates.  So we try not to unnecessarily
     // update the UI.
-    if (updateReason != UPDATE_REASON_SETTINGS_CHANGED && icon == currentIcon && status.equals(currentStatus)) {
+    if (showSignalStrength && icon == currentIcon && status.equals(currentStatus)) {
       return;
     }
 
