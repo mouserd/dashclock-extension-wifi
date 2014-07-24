@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 import com.pixelus.dashclock.ext.wifi.WifiExtension;
 
-import static com.google.android.apps.dashclock.api.DashClockExtension.UPDATE_REASON_SETTINGS_CHANGED;
-
 public class SettingsUpdatedBroadcastReceiver extends BroadcastReceiver {
 
   private static final String TAG = SettingsUpdatedBroadcastReceiver.class.getName();
@@ -23,6 +21,6 @@ public class SettingsUpdatedBroadcastReceiver extends BroadcastReceiver {
   public synchronized void onReceive(Context context, Intent intent) {
 
     Log.d(TAG, "User updated extension settings...");
-    extension.onUpdateData(UPDATE_REASON_SETTINGS_CHANGED);
+    extension.onUpdateData(WifiExtension.UPDATE_REASON_FORCED);
   }
 }

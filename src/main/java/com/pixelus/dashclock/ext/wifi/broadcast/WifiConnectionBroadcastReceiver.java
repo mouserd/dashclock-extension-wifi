@@ -19,6 +19,6 @@ public class WifiConnectionBroadcastReceiver extends BroadcastReceiver {
   @Override
   public synchronized void onReceive(Context context, Intent intent) {
 
-    extension.onUpdateData();
+    extension.onUpdateData(WifiExtension.UPDATE_REASON_FORCED);
   }
 }

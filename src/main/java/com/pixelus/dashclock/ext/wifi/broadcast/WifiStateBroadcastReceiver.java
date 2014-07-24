@@ -20,7 +20,7 @@ public class WifiStateBroadcastReceiver extends BroadcastReceiver {
   public synchronized void onReceive(Context context, Intent intent) {
 
 //      try {
-    extension.onUpdateData();
+    extension.onUpdateData(WifiExtension.UPDATE_REASON_FORCED);
 //      } catch (NullPointerException e) {
 //        // Every so often an exception seems to be thrown by the DashClock api.
 //        // It seems that this exception is timing related.  Catch and log it for now!

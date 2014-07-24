@@ -28,21 +28,17 @@ public class WifiExtension extends DashClockExtension {
   public static final String PREF_SHOW_SIGNAL_STRENGTH = "show_signal_strength";
   public static final String PREF_SHOW_ONLY_WHEN_CONNECTED = "show_only_when_connected";
 
+  public static final int UPDATE_REASON_FORCED = 99;
+
   private boolean crashlyticsStarted = false;
   private boolean signalStrengthReceiverRegistered = false;
   private boolean wifiStateReceiverRegistered = false;
 
   private WifiStateBroadcastReceiver wifiStateBroadcastReceiver;
   private WifiSignalStateBroadcastReceiver signalStrengthBroadcastReceiver;
+  private SettingsUpdatedBroadcastReceiver settingsUpdatedBroadcastReceiver;
   private int currentIcon = -1;
   private String currentStatus;
-
-  @Override
-  public void onCreate() {
-    super.onCreate();
-
-    registerReceiver(new SettingsUpdatedBroadcastReceiver(this), new IntentFilter(EXTENSION_SETTINGS_CHANGED));
-  }
 
   @Override
   protected void onInitialize(boolean isReconnect) {
@@ -64,6 +60,9 @@ public class WifiExtension extends DashClockExtension {
     registerReceiver(wifiConnectionBroadcastReceiver, new IntentFilter(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION));
     registerReceiver(wifiConnectionBroadcastReceiver, new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
 
+    settingsUpdatedBroadcastReceiver = new SettingsUpdatedBroadcastReceiver(this);
+    registerReceiver(settingsUpdatedBroadcastReceiver, new IntentFilter(EXTENSION_SETTINGS_CHANGED));
+
     onWifiStatusChanged();
     onSettingsChanged();
   }
@@ -71,6 +70,7 @@ public class WifiExtension extends DashClockExtension {
   @Override
   public void onDestroy() {
     unregisterReceiver(wifiStateBroadcastReceiver);
+    unregisterReceiver(settingsUpdatedBroadcastReceiver);
   }
 
   public void onUpdateData() {
@@ -99,7 +99,7 @@ public class WifiExtension extends DashClockExtension {
     // don't bother trying to publish an update.  This is done because this extension receives a large
     // number of broadcast messages, particularly when the signal strength updates.  So we try not to unnecessarily
     // update the UI.
-    if (showSignalStrength && icon == currentIcon && status.equals(currentStatus)) {
+    if (updateReason == UPDATE_REASON_FORCED && icon == currentIcon && status.equals(currentStatus)) {
       return;
     }
 
