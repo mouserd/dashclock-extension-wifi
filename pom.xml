@@ -11,7 +11,7 @@
   <name>DashClock Wifi Extension</name>
 
   <properties>
-    <project.versionCode>4</project.versionCode>
+    <project.versionCode>5</project.versionCode>
     <platform.version>4.1.1.4</platform.version>
     <android.plugin.version>3.9.0-rc.2</android.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
