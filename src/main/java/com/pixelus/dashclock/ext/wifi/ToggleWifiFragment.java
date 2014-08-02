@@ -16,7 +16,7 @@ import static com.pixelus.dashclock.ext.wifi.WifiExtension.WIFI_ENABLED;
 
 public class ToggleWifiFragment extends DialogFragment {
 
-  private static final String TAG = ToggleWifiFragment.class.getName();
+  private static final String TAG = ToggleWifiFragment.class.getSimpleName();
 
   private boolean wifiEnabled;
 

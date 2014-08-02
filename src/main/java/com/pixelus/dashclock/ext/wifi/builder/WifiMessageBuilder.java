@@ -10,7 +10,8 @@ import com.pixelus.dashclock.ext.wifi.R;
  */
 public class WifiMessageBuilder {
 
-  private static final String TAG = WifiMessageBuilder.class.getName();
+  private static final String TAG = WifiMessageBuilder.class.getSimpleName();
+
   private WifiManager wifiManager;
   private Context context;
   private NetworkInfo networkInfo;

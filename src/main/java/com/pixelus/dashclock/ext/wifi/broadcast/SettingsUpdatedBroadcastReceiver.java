@@ -8,7 +8,7 @@ import com.pixelus.dashclock.ext.wifi.WifiExtension;
 
 public class SettingsUpdatedBroadcastReceiver extends BroadcastReceiver {
 
-  private static final String TAG = SettingsUpdatedBroadcastReceiver.class.getName();
+  private static final String TAG = SettingsUpdatedBroadcastReceiver.class.getSimpleName();
 
   private WifiExtension extension;
 
