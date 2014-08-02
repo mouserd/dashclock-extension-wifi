@@ -22,7 +22,8 @@ import static android.net.ConnectivityManager.TYPE_WIFI;
 
 public class WifiExtension extends DashClockExtension {
 
-  public static final String TAG = WifiExtension.class.getName();
+  public static final String TAG = WifiExtension.class.getSimpleName();
+
   public static final String WIFI_ENABLED = "com.pixelus.dashclock.ext.wifi.WIFI_ENABLED";
   public static final String EXTENSION_SETTINGS_CHANGED = "com.pixelus.dashclock.ext.wifi.SETTINGS_CHANGED";
   public static final String PREF_SHOW_SIGNAL_STRENGTH = "show_signal_strength";
@@ -30,7 +31,6 @@ public class WifiExtension extends DashClockExtension {
 
   public static final int UPDATE_REASON_FORCED = 99;
 
-  private boolean crashlyticsStarted = false;
   private boolean signalStrengthReceiverRegistered = false;
   private boolean wifiStateReceiverRegistered = false;
 
@@ -41,15 +41,10 @@ public class WifiExtension extends DashClockExtension {
   private String currentStatus;
 
   @Override
-  protected void onInitialize(boolean isReconnect) {
-    super.onInitialize(isReconnect);
+  public void onCreate() {
+    super.onCreate();
 
-    if (!crashlyticsStarted) {
-      Crashlytics.start(this);
-      crashlyticsStarted = true;
-    }
-
-    setUpdateWhenScreenOn(true);
+    Crashlytics.start(this);
 
     // On create, register to receive any changes to the wifi settings.  This ensures that we can
     // update our extension status based on us toggling the state or something externally.
@@ -69,8 +64,15 @@ public class WifiExtension extends DashClockExtension {
 
   @Override
   public void onDestroy() {
-    unregisterReceiver(wifiStateBroadcastReceiver);
-    unregisterReceiver(settingsUpdatedBroadcastReceiver);
+    super.onDestroy();
+
+    try {
+      unregisterReceiver(wifiStateBroadcastReceiver);
+      unregisterReceiver(settingsUpdatedBroadcastReceiver);
+    } catch (IllegalArgumentException e) {
+      // Sometimes it appears unregister can be called before a receiver has been registered.  This isn't an issue
+      // but we don't want to crash the application because of it.
+    }
   }
 
   public void onUpdateData() {
@@ -99,7 +101,7 @@ public class WifiExtension extends DashClockExtension {
     // don't bother trying to publish an update.  This is done because this extension receives a large
     // number of broadcast messages, particularly when the signal strength updates.  So we try not to unnecessarily
     // update the UI.
-    if (updateReason == UPDATE_REASON_FORCED && icon == currentIcon && status.equals(currentStatus)) {
+    if (updateReason != UPDATE_REASON_FORCED && icon == currentIcon && status.equals(currentStatus)) {
       return;
     }
 
@@ -174,8 +176,11 @@ public class WifiExtension extends DashClockExtension {
     }
 
     // Does the user not want to see signal strength updates?
-    if (!showSignalStrength && networkInfo.isConnected()) {
-      return R.drawable.ic_signal_4;
+    if (!showSignalStrength) {
+      if (networkInfo.isConnected()) {
+        return R.drawable.ic_signal_4;
+      }
+      return R.drawable.ic_signal_0;
     }
 
     final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
