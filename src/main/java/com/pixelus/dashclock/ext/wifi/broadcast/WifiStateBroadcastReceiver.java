@@ -3,8 +3,9 @@ package com.pixelus.dashclock.ext.wifi.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import com.crashlytics.android.Crashlytics;
 import com.pixelus.dashclock.ext.wifi.WifiExtension;
+
+import static com.pixelus.dashclock.ext.wifi.WifiExtension.UPDATE_REASON_FORCED;
 
 public class WifiStateBroadcastReceiver extends BroadcastReceiver {
 
@@ -18,16 +19,8 @@ public class WifiStateBroadcastReceiver extends BroadcastReceiver {
   }
 
   @Override
-  public synchronized void onReceive(Context context, Intent intent) {
+  public synchronized void onReceive(final Context context, final Intent intent) {
 
-    try {
-      extension.onUpdateData(WifiExtension.UPDATE_REASON_FORCED);
-    } catch (NullPointerException e) {
-      // Every so often an exception seems to be thrown by the DashClock api.
-      // It seems that this exception is timing related.  Catch and log it for now!
-      Crashlytics.log("NullPointerException caught when updating dashclock following receiving broadcast: "
-          + intent.toString());
-      Crashlytics.logException(e);
-    }
+    extension.onUpdateData(UPDATE_REASON_FORCED);
   }
 }

@@ -19,6 +19,7 @@ import com.pixelus.dashclock.ext.wifi.broadcast.WifiStateBroadcastReceiver;
 import com.pixelus.dashclock.ext.wifi.builder.WifiMessageBuilder;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
+import static android.net.wifi.WifiManager.WIFI_STATE_CHANGED_ACTION;
 
 public class WifiExtension extends DashClockExtension {
 
@@ -39,6 +40,13 @@ public class WifiExtension extends DashClockExtension {
   private SettingsUpdatedBroadcastReceiver settingsUpdatedBroadcastReceiver;
   private int currentIcon = -1;
   private String currentStatus;
+  private boolean initialized;
+
+  @Override
+  protected void onInitialize(boolean isReconnect) {
+    super.onInitialize(isReconnect);
+    initialized = true;
+  }
 
   @Override
   public void onCreate() {
@@ -66,6 +74,8 @@ public class WifiExtension extends DashClockExtension {
   public void onDestroy() {
     super.onDestroy();
 
+    initialized = false;
+
     try {
       unregisterReceiver(wifiStateBroadcastReceiver);
       unregisterReceiver(settingsUpdatedBroadcastReceiver);
@@ -81,6 +91,10 @@ public class WifiExtension extends DashClockExtension {
 
   @Override
   public void onUpdateData(int updateReason) {
+
+    if (!initialized) {
+      return;
+    }
 
     final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
     final boolean showSignalStrength = sp.getBoolean(PREF_SHOW_SIGNAL_STRENGTH, false);
@@ -136,7 +150,7 @@ public class WifiExtension extends DashClockExtension {
   private void updateWifiStatusBroadcastReceiver(boolean wifiEnabled) {
 
     if (wifiEnabled) {
-      registerReceiver(wifiStateBroadcastReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+      registerReceiver(wifiStateBroadcastReceiver, new IntentFilter(WIFI_STATE_CHANGED_ACTION));
     } else {
       if (wifiStateReceiverRegistered) {
         unregisterReceiver(wifiStateBroadcastReceiver);
