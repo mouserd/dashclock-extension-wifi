@@ -49,7 +49,6 @@ public class ToggleWifiFragment extends DialogFragment {
 //      this.activity = context;
     }
 
-    @Override
     public void onClick(final DialogInterface dialog, final int id) {
 
       Log.d(TAG, "Handling " + (BUTTON_POSITIVE == id ? "affirmative" : "negative") + " click event");

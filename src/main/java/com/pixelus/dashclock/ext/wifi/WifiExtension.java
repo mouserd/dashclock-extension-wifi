@@ -17,6 +17,7 @@ import com.pixelus.dashclock.ext.wifi.broadcast.WifiConnectionBroadcastReceiver;
 import com.pixelus.dashclock.ext.wifi.broadcast.WifiSignalStateBroadcastReceiver;
 import com.pixelus.dashclock.ext.wifi.broadcast.WifiStateBroadcastReceiver;
 import com.pixelus.dashclock.ext.wifi.builder.WifiMessageBuilder;
+import io.fabric.sdk.android.Fabric;
 
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.net.wifi.WifiManager.WIFI_STATE_CHANGED_ACTION;
@@ -52,7 +53,7 @@ public class WifiExtension extends DashClockExtension {
   public void onCreate() {
     super.onCreate();
 
-    Crashlytics.start(this);
+    Fabric.with(this, new Crashlytics());
 
     // On create, register to receive any changes to the wifi settings.  This ensures that we can
     // update our extension status based on us toggling the state or something externally.
